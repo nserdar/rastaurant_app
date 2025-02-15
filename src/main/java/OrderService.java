@@ -3,43 +3,65 @@ package main.java;
 import java.util.ArrayList;
 import java.util.List;
 
-//OrderService sınıfı, siparişleri yönetir:
-// Sipariş oluşturma, listeleme gibi işlemler burada tanımlanır.
 public class OrderService {
     private List<Order> orderList = new ArrayList<>();
 
-    //sipariş oluşturma:
-    public void createOrder(Order order){
+    // Create an order
+    public void createOrder(Order order) {
         orderList.add(order);
     }
 
-    //sipariş listeleme:
-    public List<Order> listOrder(){
+    // List all orders
+    public List<Order> listOrder() {
         return orderList;
     }
 
-    //id'ye göre sipariş arama:
-    public String findOrderById(int id){
-        for (Order order: orderList){
-            if (order.getOrderId() == id){
+    // Find order by ID
+    public String findOrderById(int id) {
+        for (Order order : orderList) {
+            if (order.getOrderId() == id) {
                 return id + " id'li siparişiniz: " + order;
             }
         }
         return "Sipariş Yok";
     }
 
-    //category'ye göre arama:
-    public List<Order> findOrderByCategory(Category category){
+    // Find orders by category
+    public List<Order> findOrderByCategory(Category category) {
         List<Order> matchingOrder = new ArrayList<>();
-
-        for (Order order: orderList){
-            for (Product product: order.getProducts()){
-                if (product.getCategory() == category){
+        for (Order order : orderList) {
+            for (Product product : order.getProducts()) {
+                if (product.getCategory() == category) {
                     matchingOrder.add(order);
-                    break;// Bir eşleşme bulunduğunda diğer ürünlere bakmaya gerek yok
+                    break; // Stop checking other products in the order
                 }
             }
         }
         return matchingOrder;
+    }
+
+    // Update a product in an order
+    public boolean updateProductInOrder(int orderId, int productId, Product newProduct) {
+        for (Order order : orderList) {
+            if (order.getOrderId() == orderId) {
+                for (int i = 0; i < order.getProducts().size(); i++) {
+                    if (order.getProducts().get(i).getId() == productId) {
+                        order.getProducts().set(i, newProduct);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    // Remove a product from an order
+    public boolean removeProductFromOrder(int orderId, int productId) {
+        for (Order order : orderList) {
+            if (order.getOrderId() == orderId) {
+                return order.getProducts().removeIf(product -> product.getId() == productId);
+            }
+        }
+        return false;
     }
 }
